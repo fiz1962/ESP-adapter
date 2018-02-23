@@ -102,81 +102,37 @@ class ESP8266Adapter extends Adapter {
   }
 
   startPairing(timeoutSeconds) {
-    console.log('Esp8266ThingAdapter:', this.name, 'id', this.id, 'pairing started');
+    console.log(this.name, 'id', this.id, 'pairing started');
 
     var ipStart = this.manifest.moziot.config.ipStart;
     var ipStartSplit = ipStart.split(".");
     var ipEnd = this.manifest.moziot.config.ipEnd;
     var ipEndSplit = ipEnd.split(".");
 
-    let url="";
+    var url="";
 
     console.log("Pairing "+ipStartSplit[3]+" to "+ipEndSplit[3]);
     for(var i=ipStartSplit[3]; i<=ipEndSplit[3]; i++) {
       url = "http://"+ipStartSplit[0]+"."+ipStartSplit[1]+"."+ipStartSplit[2]+"."+i+"/thing";
-      console.log("Trying "+url);
       fetch(url)
-      .then(function() {
-          console.log("Why did we find a device at "+url);
+      .then((resp) => resp.json())
+      .then((resp) => {
+        let name = resp['name'];
+        let id = resp['id'];
+        let description = resp['description'];
+        let type = resp['type'];
+
+        this.handleDeviceAdded(new ESP8266Device(this, id, name, type, description, url, resp['properties']));
       }).catch(function() {
           console.log("error: No device at "+url);
       });
 
     }
-
-    url = "http://localhost/thing2/thing";
-  
-    fetch(url+"/wot_conf.php")
-    .then((resp) => resp.json())
-    .then((resp) => {
-      let name = resp['name'];
-      let id = resp['id'];
-      let description = resp['description'];
-      let type = resp['type'];
-
-      this.handleDeviceAdded(new ESP8266Device(this, id, name, type, description, url, resp['properties']));
-    })
-
-    url = "http://localhost/thing1/thing";
-  
-    fetch(url+"/wot_conf.php")
-    .then((resp) => resp.json())
-    .then((resp) => {
-      let name = resp['name'];
-      let id = resp['id'];
-      let description = resp['description'];
-      let type = resp['type'];
-
-      this.handleDeviceAdded(new ESP8266Device(this, id, name, type, description, url, resp['properties']));
-    })
-
   }
 }
 
 function loadESP8266Adapter(addonManager, manifest, _errorCallback) {
   let adapter = new ESP8266Adapter(addonManager, manifest.name, manifest);
-
-  // set these values from package.json
-  // url is the address of the esp8266 device and any path is defined in the *.ino file
-  // name must match the gateway/src/addons/{foldername}
-  // id should be unique
-  // type must be a mozilla-iot 'type'
-  /*let url = manifest.moziot.config.url;
-  let name = manifest.name;
-  let id = manifest.id;
-  let description = manifest.description;
-  let type = manifest.type;
-  
-  if (!url) {
-    console.error('No URL specified in config');
-    return;
-  }
-
-    fetch(url+"/wot_conf.php")
-    .then((resp) => resp.json())
-    .then((resp) => {
-      adapter.handleDeviceAdded(new ESP8266Device(adapter, id, name, type, description, url, resp['properties']));
-    })*/
 }
 
 module.exports = loadESP8266Adapter;
