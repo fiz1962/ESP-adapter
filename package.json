@@ -2,8 +2,6 @@
   "name": "espThing",
   "version": "0.1.0",
   "description": "Example ESP8266 Mozillia-IOT Device",
-  "id": "ESPThing1",
-  "type": "thing",
   "main": "index.js",
   "keywords": [
     "mozilla",
@@ -36,7 +34,8 @@
     "plugin": true,
     "exec": "{nodeLoader} {path}",
     "config": {
-      "url": "http://myESP8266/thing"
+      "ipStart": "192.168.1.100",
+      "ipEnd": "192.168.1.120"
     }
   }
 }
