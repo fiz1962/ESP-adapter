@@ -19,14 +19,13 @@ class ESP8266Property extends Property {
     this.unit = propertyDescription.unit;
     this.description = propertyDescription.description;
     this.device = device;
-    this.href = propertyDescription.href;
 
-    // set value but allow ESP8266 response to override it and any others
     this.setCachedValue(propertyDescription.value);
     this.device.notifyPropertyChanged(this);
     let url = this.device.url;
 
-    fetch(url+"/wot.php")
+    // get all values
+    fetch(url+"/get")
     .then((resp) => resp.json())
     .then((resp) => {
         let keys = Object.keys(resp);
@@ -56,7 +55,7 @@ class ESP8266Property extends Property {
       resolve(value);
       this.device.notifyPropertyChanged(this);
 
-      url = this.href + "/set?" + this.name + "=" + value;
+      url = this.device.url + "/set?" + this.name + "=" + value;
       fetch(url)
       .then((resp) => resp.json())
       .then((resp) => {
