@@ -51,7 +51,7 @@ class ESP8266Property extends Property {
     return new Promise((resolve, reject) => {
       let url=this.device.url;
 
-      // set value but allow override in response
+      // set value but allow override in response.
       this.setCachedValue(value);
       resolve(value);
       this.device.notifyPropertyChanged(this);
@@ -85,6 +85,7 @@ class ESP8266Device extends Device {
     this.type = type;
     this.description = description;
 
+    // properties are set by a json response from the actual device
     let keys = Object.keys(properties);
     let values = Object.values(properties); 
     for (var i=0; i<keys.length; i++) {
@@ -102,6 +103,12 @@ class ESP8266Adapter extends Adapter {
 
 function loadESP8266Adapter(addonManager, manifest, _errorCallback) {
   let adapter = new ESP8266Adapter(addonManager, manifest.name);
+
+  // set these values from package.json
+  // url is the address of the esp8266 device and any path is defined in the *.ino file
+  // name must match the gateway/src/addons/{foldername}
+  // id should be unique
+  // type must be a mozilla-iot 'type'
   let url = manifest.moziot.config.url;
   let name = manifest.name;
   let id = manifest.id;
