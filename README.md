@@ -1,7 +1,19 @@
-Adapter for use in conjunction with the ESP8266 wifi device and IOT gateway from https://github.com/mozilla-iot.  Original code from the http-on-off-adapter (https://github.com/mozilla-iot/http-on-off-adapter).
+Adapter for use with ESP8266 wifi devices and Mozilla-IOT gateway from https://github.com/mozilla-iot.  Based on code from the http-on-off-adapter (https://github.com/mozilla-iot/http-on-off-adapter).
 
-This adapter presents a single device with configuration read from the ESP8266 wifi device.
+This adapter scans a range of IP addresses defined in package.json for ESP8266/nodeMCU/Arduino/laptops/desktops/etc that respond with json data defining an IOT device.  An ESP8266/Arduino example sketch is included.  The name, id and description returned in the json data should be unique for each device.
 
-"name" in package.json must match the folder name in gateway/src/addons/{foldername}.  The "version", "description", "id", "type" and "url" in package.json should be edited as desired and the SHA256SUMS updated.  Change "id" to be unique for each device.  "type" must be a valid mozilla-iot type.  Multiple devices can be created by making multiple copies of the code in gateway/src/addons/{multiplefolders}.
+To use:
+Put files in the "gateway/src/addons/espThing" folder.  
+Edit the range of IP addresses in package.json.  
+Power up all the ESP8266 devices.
+Start the gateway.
+Login to the gateway (ex https://localhost:4443).
+Enable the adapter by clicking the "3 bars" in the top/left corner of the web browser.
+Click "Settings", then "Addons".
+You should see "espThing" listed, click "Enable" if not already.
+Click the arrow in the web browser.
+Click the "Things" on the web browser".
+Click the 3 bars and then "Things".
+Click the "+" in the bottom right of the web browser to start pairing.
+Save any devices.
 
-The configuration of the device is read on init of the adapter by a json response from the ESP8266 device.  See the iot.ino in the ino folder for an example.
