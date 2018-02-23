@@ -1,0 +1,42 @@
+{
+  "name": "espThing",
+  "version": "0.1.0",
+  "description": "Example ESP8266 Mozillia-IOT Device",
+  "id": "ESPThing1",
+  "type": "thing",
+  "main": "index.js",
+  "keywords": [
+    "mozilla",
+    "iot",
+    "adapter",
+    "esp8266",
+    "example"
+  ],
+  "author": "Fiz N. Stein",
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/fiz1962/ESP8266-adapter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fiz1962/ESP8266-adapter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fiz1962/ESP8266-adapter/issues"
+  },
+  "files": [
+    "LICENSE",
+    "SHA256SUMS",
+    "./esp8266-adapter.js",
+    "index.js"
+  ],
+  "moziot": {
+    "api": {
+      "min": 1,
+      "max": 1
+    },
+    "plugin": true,
+    "exec": "{nodeLoader} {path}",
+    "config": {
+      "url": "http://localhost/thing"
+    }
+  }
+}
