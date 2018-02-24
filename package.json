@@ -1,29 +1,29 @@
 {
-  "name": "ESP8266-adapter",
+  "name": "ESPadapter",
   "version": "0.1.0",
-  "description": "Example ESP8266 Mozillia-IOT Device",
+  "description": "ESP Mozillia-IOT adapter",
   "main": "index.js",
   "keywords": [
     "mozilla",
     "iot",
     "adapter",
-    "esp8266",
-    "example"
+    "web",
+    "server"
   ],
   "author": "Fiz N. Stein",
   "license": "MPL-2.0",
-  "homepage": "https://github.com/fiz1962/ESP8266-adapter",
+  "homepage": "https://github.com/fiz1962/ESP-adapter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fiz1962/ESP8266-adapter.git"
+    "url": "https://github.com/fiz1962/ESP-adapter.git"
   },
   "bugs": {
-    "url": "https://github.com/fiz1962/ESP8266-adapter/issues"
+    "url": "https://github.com/fiz1962/ESP-adapter/issues"
   },
   "files": [
     "LICENSE",
     "SHA256SUMS",
-    "./esp8266-adapter.js",
+    "./esp-adapter.js",
     "index.js"
   ],
   "moziot": {
@@ -34,8 +34,8 @@
     "plugin": true,
     "exec": "{nodeLoader} {path}",
     "config": {
-      "ipStart": "192.168.1.147",
-      "ipEnd": "192.168.1.147"
+      "ipStart": "192.168.1.100",
+      "ipEnd": "192.168.1.199"
     }
   }
 }

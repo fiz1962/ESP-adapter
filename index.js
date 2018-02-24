@@ -8,4 +8,4 @@
 
 'use strict';
 
-module.exports = require('./esp8266-adapter');
+module.exports = require('./esp-adapter');

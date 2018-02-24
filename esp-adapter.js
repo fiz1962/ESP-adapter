@@ -1,5 +1,5 @@
 /**
- * esp8266-adapter.js - OnOff adapter implemented as a plugin.
+ * esp-adapter.js - Web server adapter implemented as a plugin.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@ const Device = require('../device');
 const Property = require('../property');
 const fetch = require('node-fetch');
 
-class ESP8266Property extends Property {
+class ESPProperty extends Property {
   constructor(device, name, propertyDescription) {
     super(device, name, propertyDescription);
     this.unit = propertyDescription.unit;
@@ -76,7 +76,7 @@ class ESP8266Property extends Property {
   }
 }
 
-class ESP8266Device extends Device {
+class ESPDevice extends Device {
   constructor(adapter, id, name, type, description, url, properties) {
     super(adapter, id);
 
@@ -89,14 +89,14 @@ class ESP8266Device extends Device {
     let keys = Object.keys(properties);
     let values = Object.values(properties); 
     for (var i=0; i<keys.length; i++) {
-      this.properties.set(keys[i], new ESP8266Property(this, keys[i], values[i]));
+      this.properties.set(keys[i], new ESPProperty(this, keys[i], values[i]));
     }
   }
 }
 
-class ESP8266Adapter extends Adapter {
+class ESPAdapter extends Adapter {
   constructor(addonManager, packageName, manifest) {
-    super(addonManager, 'ESP8266fAdapter', packageName);
+    super(addonManager, 'ESPAdapter', packageName);
     addonManager.addAdapter(this);
     this.manifest = manifest;
   }
@@ -124,7 +124,7 @@ class ESP8266Adapter extends Adapter {
         let description = resp['description'];
         let type = resp['type'];
 
-        this.handleDeviceAdded(new ESP8266Device(this, id, name, type, description, url, resp['properties']));
+        this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, url, resp['properties']));
       });/*.catch(function() {
           console.log("error: No device at "+url);
       });*/
@@ -133,8 +133,8 @@ class ESP8266Adapter extends Adapter {
   }
 }
 
-function loadESP8266Adapter(addonManager, manifest, _errorCallback) {
-  let adapter = new ESP8266Adapter(addonManager, manifest.name, manifest);
+function loadESPAdapter(addonManager, manifest, _errorCallback) {
+  let adapter = new ESPAdapter(addonManager, manifest.name, manifest);
 }
 
-module.exports = loadESP8266Adapter;
+module.exports = loadESPAdapter;
