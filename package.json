@@ -1,5 +1,5 @@
 {
-  "name": "espThing",
+  "name": "ESP8266-adapter",
   "version": "0.1.0",
   "description": "Example ESP8266 Mozillia-IOT Device",
   "main": "index.js",
@@ -34,8 +34,8 @@
     "plugin": true,
     "exec": "{nodeLoader} {path}",
     "config": {
-      "ipStart": "192.168.1.100",
-      "ipEnd": "192.168.1.120"
+      "ipStart": "192.168.1.147",
+      "ipEnd": "192.168.1.147"
     }
   }
 }

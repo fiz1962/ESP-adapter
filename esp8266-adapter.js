@@ -25,7 +25,7 @@ class ESP8266Property extends Property {
     let url = this.device.url;
 
     // get all values
-    fetch(url+"/get")
+/*    fetch(url+"/get")
     .then((resp) => resp.json())
     .then((resp) => {
         let keys = Object.keys(resp);
@@ -35,7 +35,7 @@ class ESP8266Property extends Property {
           obj.setCachedValue(values[i]);
           this.device.notifyPropertyChanged(obj);
         }
-    });
+    });*/
   }
 
   /**
@@ -56,6 +56,7 @@ class ESP8266Property extends Property {
       this.device.notifyPropertyChanged(this);
 
       url = this.device.url + "/set?" + this.name + "=" + value;
+      console.log("Setting url "+url);
       fetch(url)
       .then((resp) => resp.json())
       .then((resp) => {
@@ -66,11 +67,11 @@ class ESP8266Property extends Property {
           obj.setCachedValue(values[i]);
           this.device.notifyPropertyChanged(obj);
         }
-      }).catch(e => {
+      });/*.catch(e => {
         console.error('Request to:', url, 'failed');
         console.error(e);
         reject(e);
-      });
+      });*/
     });
   }
 }
@@ -113,18 +114,20 @@ class ESP8266Adapter extends Adapter {
     console.log("Pairing "+ipStartSplit[3]+" to "+ipEndSplit[3]);
     for(var i=ipStartSplit[3]; i<=ipEndSplit[3]; i++) {
       url = "http://"+ipStartSplit[0]+"."+ipStartSplit[1]+"."+ipStartSplit[2]+"."+i+"/thing";
+      console.log("Trying "+url);
       fetch(url)
       .then((resp) => resp.json())
       .then((resp) => {
+        console.log("Trying to create device");
         let name = resp['name'];
         let id = resp['id'];
         let description = resp['description'];
         let type = resp['type'];
 
         this.handleDeviceAdded(new ESP8266Device(this, id, name, type, description, url, resp['properties']));
-      }).catch(function() {
+      });/*.catch(function() {
           console.log("error: No device at "+url);
-      });
+      });*/
 
     }
   }
