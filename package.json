@@ -1,5 +1,5 @@
 {
-  "name": "ESPadapter",
+  "name": "esp-adapter",
   "version": "0.3.0",
   "description": "ESP Mozillia-IOT adapter",
   "main": "index.js",
