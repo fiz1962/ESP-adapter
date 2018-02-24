@@ -10,7 +10,7 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
   
   Serial.begin(115200);
-  WiFi.begin("Network name", "Password");  //Connect to the WiFi network
+  WiFi.begin("{ssid}", "{passcode}");  //Connect to the WiFi network
  
   while (WiFi.status() != WL_CONNECTED) {  //Wait for connection
     delay(500);
@@ -23,6 +23,10 @@ void setup() {
  //Define the handling function for the config response
   server.on("/thing", []() {   
     String configThing = "{\
+   \"name\": \"ESP8266\",\
+   \"type\": \"thing\",\
+   \"id\": \"ESP8266-01\",\
+   \"description\": \"myESP8266\",\   
    \"properties\": {\
      \"Clock\": {\
        \"type\":  \"number\",\
@@ -37,15 +41,14 @@ void setup() {
     }\
   }\
 }";
-
-    server.send(200, "text/plain", configThing); 
+    server.send(200, "text/json", configThing);
   });
  
   // respond to setting LED on/off
   // attempts to set clock simply return current clock value
-  server.on("/thing/set", []() {   //Define the handling function for the config response
-    char respondThing[512];
-    sprintf(respondThing, "{}");
+  server.on("/thing/set", []() {      //Define the handling function for the config response
+    char respondThing[2048];
+   
     if(server.arg("led")!= "") {
       if(server.arg("led")=="true" ) {
           digitalWrite(LED_BUILTIN, HIGH);
@@ -53,15 +56,14 @@ void setup() {
           digitalWrite(LED_BUILTIN, LOW);
       }
       unsigned long currentMillis = millis();
-      sprintf(respondThing, "{\"Clock\": %d}", currentMillis);
+      sprintf(respondThing, "%s{\"Clock\": %d}", hdr.c_str(), currentMillis);
     }
 
     if(server.arg("Clock")!= "") {
       unsigned long currentMillis = millis();
-      sprintf(respondThing, "{\"Clock\": %d}", currentMillis);
+      sprintf(respondThing, "%s{\"Clock\": %d}", hdr.c_str(), currentMillis);
     }
-    
-    server.send(200, "text/plain", respondThing); 
+    server.send(200, "text/json", respondThing); 
   });
  
   server.begin();                                       //Start the server
@@ -74,4 +76,3 @@ void loop() {
   server.handleClient();         //Handling of incoming requests
  
 }
- 
