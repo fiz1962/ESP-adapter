@@ -25,7 +25,7 @@ class ESPProperty extends Property {
     let url = this.device.url;
 
     // get all values
-/*    fetch(url+"/get")
+    fetch(url+"/set")
     .then((resp) => resp.json())
     .then((resp) => {
         let keys = Object.keys(resp);
@@ -35,7 +35,7 @@ class ESPProperty extends Property {
           obj.setCachedValue(values[i]);
           this.device.notifyPropertyChanged(obj);
         }
-    });*/
+    });
   }
 
   /**
@@ -67,11 +67,11 @@ class ESPProperty extends Property {
           obj.setCachedValue(values[i]);
           this.device.notifyPropertyChanged(obj);
         }
-      });/*.catch(e => {
+      }).catch(e => {
         console.error('Request to:', url, 'failed');
         console.error(e);
         reject(e);
-      });*/
+      });
     });
   }
 }
@@ -85,6 +85,7 @@ class ESPDevice extends Device {
     this.type = type;
     this.description = description;
 
+    console.log("Adding device at "+url);
     // properties are set by a json response from the actual device
     let keys = Object.keys(properties);
     let values = Object.values(properties); 
@@ -110,24 +111,32 @@ class ESPAdapter extends Adapter {
     var ipEndSplit = ipEnd.split(".");
 
     var url="";
+    var urlThing;
 
     console.log("Pairing "+ipStartSplit[3]+" to "+ipEndSplit[3]);
     for(var i=ipStartSplit[3]; i<=ipEndSplit[3]; i++) {
       url = "http://"+ipStartSplit[0]+"."+ipStartSplit[1]+"."+ipStartSplit[2]+"."+i+"/thing";
       console.log("Trying "+url);
       fetch(url)
+      .then(function(response) {
+         urlThing = response.url;
+         console.log("Code "+response.statusText);
+         if (!response.ok) {
+           throw Error(response.statusText);
+         }
+         console.log("Response url "+response.url);
+         return response;
+       })
       .then((resp) => resp.json())
       .then((resp) => {
-        console.log("Trying to create device");
         let name = resp['name'];
         let id = resp['id'];
         let description = resp['description'];
         let type = resp['type'];
-
-        this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, url, resp['properties']));
-      });/*.catch(function() {
-          console.log("error: No device at "+url);
-      });*/
+        let devurl = resp
+        this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, urlThing, resp['properties']));
+      }).catch(function(resp) {
+      });
 
     }
   }
