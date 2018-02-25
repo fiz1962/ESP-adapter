@@ -26,6 +26,13 @@ class ESPProperty extends Property {
 
     // get all values
     fetch(url+"/set")
+    .then(function(response) {
+       urlThing = response.url;
+       if (!response.ok) {
+         throw Error(response.statusText);
+       }
+       return response;
+     })
     .then((resp) => resp.json())
     .then((resp) => {
         let keys = Object.keys(resp);
@@ -35,6 +42,10 @@ class ESPProperty extends Property {
           obj.setCachedValue(values[i]);
           this.device.notifyPropertyChanged(obj);
         }
+    }).catch(e => {
+        console.error('config:', url, 'failed');
+        console.error(e);
+        reject(e);
     });
   }
 
@@ -56,8 +67,14 @@ class ESPProperty extends Property {
       this.device.notifyPropertyChanged(this);
 
       url = this.device.url + "/set?" + this.name + "=" + value;
-      console.log("Setting url "+url);
+console.log('set->'+url);
       fetch(url)
+      .then(function(response) {
+         if (!response.ok) {
+           throw Error(response.statusText);
+         }
+         return response;
+       })
       .then((resp) => resp.json())
       .then((resp) => {
         let keys = Object.keys(resp);
@@ -68,7 +85,7 @@ class ESPProperty extends Property {
           this.device.notifyPropertyChanged(obj);
         }
       }).catch(e => {
-        console.error('Request to:', url, 'failed');
+        console.error('set: Request to:', url, 'failed');
         console.error(e);
         reject(e);
       });
@@ -112,19 +129,25 @@ class ESPAdapter extends Adapter {
 
     var url="";
     var urlThing;
+    var thingUser = this.manifest.moziot.config.thingUser;
+    var thingPwd = this.manifest.moziot.config.thingPwd;
 
     console.log("Pairing "+ipStartSplit[3]+" to "+ipEndSplit[3]);
     for(var i=ipStartSplit[3]; i<=ipEndSplit[3]; i++) {
-      url = "http://"+ipStartSplit[0]+"."+ipStartSplit[1]+"."+ipStartSplit[2]+"."+i+"/thing";
+      if( thingUser ) {
+        url = "http://"+thingUser+":"+thingPwd+"@"+ipStartSplit[0]+"."+ipStartSplit[1]+"."+ipStartSplit[2]+"."+i+"/thing";
+      }
+      else {
+        url = "http://"+ipStartSplit[0]+"."+ipStartSplit[1]+"."+ipStartSplit[2]+"."+i+"/thing";
+      }
+
       console.log("Trying "+url);
       fetch(url)
       .then(function(response) {
          urlThing = response.url;
-         console.log("Code "+response.statusText);
          if (!response.ok) {
            throw Error(response.statusText);
          }
-         console.log("Response url "+response.url);
          return response;
        })
       .then((resp) => resp.json())
@@ -135,7 +158,10 @@ class ESPAdapter extends Adapter {
         let type = resp['type'];
         let devurl = resp
         this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, urlThing, resp['properties']));
-      }).catch(function(resp) {
+      }).catch(e => {
+        console.error('pair:', url, 'failed');
+        console.error(e);
+        reject(e);
       });
 
     }

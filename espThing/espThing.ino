@@ -2,15 +2,21 @@
 #include <ESP8266WebServer.h>
  
 ESP8266WebServer server(80);
+
+char* ssid    = "ssid";
+char* wifiPwd = "passCode";
+
 String jwt = "Insert JWT string here";
+char* thingUser = "myUser";
+char* thingPwd  = "myPwd";
 
 void setup() {
  
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, HIGH);
   
   Serial.begin(115200);
-  WiFi.begin("{ssid}", "{passCode}");  //Connect to the WiFi network
+  WiFi.begin(ssid, wifiPwd);  //Connect to the WiFi network
  
   while (WiFi.status() != WL_CONNECTED) {  //Wait for connection
     delay(500);
@@ -22,8 +28,8 @@ void setup() {
  
  //Define the handling function for the config response
   server.on("/thing", []() {
-//    if(!server.authenticate("myUser", "myPwd"))
-//      return server.requestAuthentication();
+    if(!server.authenticate(thingUser, thingPwd))
+      return server.requestAuthentication();
       
     String configThing = "{\
    \"name\": \"ESP8266\",\
@@ -50,10 +56,13 @@ void setup() {
   // respond to setting LED on/off
   // attempts to set clock simply return current clock value
   server.on("/thing/set", []() {      //Define the handling function for the config response
-    char respondThing[2048];
-//    if(!server.authenticate("myUser", "myPwd"))
-//      return server.requestAuthentication();
+    Serial.println("set thing");
+    if(!server.authenticate(thingUser, thingPwd))
+      return server.requestAuthentication();
    
+    char respondThing[1024];
+    sprintf(respondThing, "{}");
+
     if(server.arg("led")!= "") {
       if(server.arg("led")=="true" ) {
           digitalWrite(LED_BUILTIN, HIGH);
@@ -61,13 +70,14 @@ void setup() {
           digitalWrite(LED_BUILTIN, LOW);
       }
       unsigned long currentMillis = millis();
-      sprintf(respondThing, "%s{\"Clock\": %d}", currentMillis);
+      sprintf(respondThing, "{\"Clock\": %d}", currentMillis);
     }
 
     if(server.arg("Clock")!= "") {
       unsigned long currentMillis = millis();
       sprintf(respondThing, "{\"Clock\": %d}", currentMillis);
     }
+    Serial.printf("Sending %s\n", respondThing);
     server.send(200, "text/json", respondThing); 
   });
  
