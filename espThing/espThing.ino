@@ -10,7 +10,7 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
   
   Serial.begin(115200);
-  WiFi.begin("{ssid}", "{passcode}");  //Connect to the WiFi network
+  WiFi.begin("{ssid}", "{passCode}");  //Connect to the WiFi network
  
   while (WiFi.status() != WL_CONNECTED) {  //Wait for connection
     delay(500);
@@ -21,7 +21,10 @@ void setup() {
   Serial.println(WiFi.localIP());  //Print the local IP
  
  //Define the handling function for the config response
-  server.on("/thing", []() {   
+  server.on("/thing", []() {
+//    if(!server.authenticate("myUser", "myPwd"))
+//      return server.requestAuthentication();
+      
     String configThing = "{\
    \"name\": \"ESP8266\",\
    \"type\": \"thing\",\
@@ -48,6 +51,8 @@ void setup() {
   // attempts to set clock simply return current clock value
   server.on("/thing/set", []() {      //Define the handling function for the config response
     char respondThing[2048];
+//    if(!server.authenticate("myUser", "myPwd"))
+//      return server.requestAuthentication();
    
     if(server.arg("led")!= "") {
       if(server.arg("led")=="true" ) {
@@ -56,12 +61,12 @@ void setup() {
           digitalWrite(LED_BUILTIN, LOW);
       }
       unsigned long currentMillis = millis();
-      sprintf(respondThing, "%s{\"Clock\": %d}", hdr.c_str(), currentMillis);
+      sprintf(respondThing, "%s{\"Clock\": %d}", currentMillis);
     }
 
     if(server.arg("Clock")!= "") {
       unsigned long currentMillis = millis();
-      sprintf(respondThing, "%s{\"Clock\": %d}", hdr.c_str(), currentMillis);
+      sprintf(respondThing, "{\"Clock\": %d}", currentMillis);
     }
     server.send(200, "text/json", respondThing); 
   });
