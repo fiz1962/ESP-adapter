@@ -27,7 +27,7 @@ void setup() {
   Serial.println(WiFi.localIP());  //Print the local IP
  
  //Define the handling function for the config response
-  server.on("/thing", []() {
+  server.on("/things/esp", []() {
     if(!server.authenticate(thingUser, thingPwd))
       return server.requestAuthentication();
       
@@ -37,50 +37,49 @@ void setup() {
    \"id\": \"ESP8266-01\",\
    \"description\": \"myESP8266\",\   
    \"properties\": {\
-     \"Clock\": {\
+     \"clock\": {\
        \"type\":  \"number\",\
        \"unit\":  \"Ticks\",\
        \"description\":  \"The millisec clock count\",\
-       \"value\":  \"0\"\
+       \"href\":\"/properties/clock\",\
     },\
      \"led\": {\
        \"type\":  \"boolean\",\
        \"description\":  \"The onboard LED\",\
-       \"value\":  \"false\"\
+       \"href\":\"/properties/led\",\
     }\
   }\
 }";
     server.send(200, "text/json", configThing);
   });
  
-  // respond to setting LED on/off
-  // attempts to set clock simply return current clock value
-  server.on("/thing/set", []() {      //Define the handling function for the config response
-    Serial.println("set thing");
+  // respond to reading current led property
+  server.on("/things/esp/properties/led", HTTP_GET, []() {
+    Serial.println("led thing property");
     if(!server.authenticate(thingUser, thingPwd))
       return server.requestAuthentication();
    
-    char respondThing[1024];
-    sprintf(respondThing, "{}");
+   char respondThing[1024];
+   sprintf(respondThing, "{\"led\":\"%s\"}", digitalRead(LED_BUILTIN));
 
-    if(server.arg("led")!= "") {
-      if(server.arg("led")=="true" ) {
-          digitalWrite(LED_BUILTIN, HIGH);
-      } else {
-          digitalWrite(LED_BUILTIN, LOW);
-      }
-      unsigned long currentMillis = millis();
-      sprintf(respondThing, "{\"Clock\": %d}", currentMillis);
-    }
-
-    if(server.arg("Clock")!= "") {
-      unsigned long currentMillis = millis();
-      sprintf(respondThing, "{\"Clock\": %d}", currentMillis);
-    }
-    Serial.printf("Sending %s\n", respondThing);
     server.send(200, "text/json", respondThing); 
   });
  
+  // respond to setting led property
+  server.on("/things/esp/properties/led", HTTP_PUT, []() {
+    Serial.println("led thing property");
+    if(!server.authenticate(thingUser, thingPwd))
+      return server.requestAuthentication();
+   
+    char* respondThing = "";
+    if( server.args("led")==true )
+      digitalWrite(LED_BUILTIN, LOW);
+    else
+      digitalWrite(LED_BUILTIN, HIGH);
+      
+    server.send(200, "text/json", respondThing); 
+  });
+
   server.begin();                                       //Start the server
   Serial.println("Server listening");
  
