@@ -1,5 +1,5 @@
 {
-  "name": "esp-adapter",
+  "name": "ESP-adapter",
   "version": "0.3.1",
   "description": "ESP Mozillia-IOT adapter",
   "main": "index.js",
@@ -23,7 +23,7 @@
   "files": [
     "LICENSE",
     "SHA256SUMS",
-    "./esp-adapter.js",
+    "esp-adapter.js",
     "index.js"
   ],
   "moziot": {
