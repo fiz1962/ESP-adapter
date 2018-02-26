@@ -23,7 +23,7 @@
   "files": [
     "LICENSE",
     "SHA256SUMS",
-    "./esp-adapter.js",
+    "esp-adapter.js",
     "index.js"
   ],
   "moziot": {
