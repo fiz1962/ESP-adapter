@@ -2,7 +2,7 @@ Adapter for use with devices such as the ESP8266, Arduino, laptops, etc  and the
 
 Example Arduino/esp8266 sketch and example php code is at https://github.com/fiz1962/ESP-adapter.
 
-In adition to the Wot API, the device must return a unique ID in the Thing resource.
+The WoT API can be found at https://iot.mozilla.org/wot/.
 
 When the adapter pairing is performed ("+" button on main page), this adapter scans a range of IP addresses defined in package.json for ESP8266/nodeMCU/Arduino/laptops/desktops/etc that respond with json data defining an IOT device.  An ESP8266/Arduino example sketch and PHP code is included.  The name, id and description returned in the json data should be unique for each device.
 
@@ -19,42 +19,5 @@ You should see "esp-adapter" listed, click "Enable" if not already enabled.
 Return to the main page.
 Click the "+" in the bottom right of the web browser to start pairing.
 Save any devices.
-
-=====================================
-
-Example: Get a description of a Thing
-
-REQUEST
-GET http://mythingserver.com/thing
-Accept: application/json
-RESPONSE
-200 OK
-{
-  "name":"WoT Pi",
-  "id": "Unique ID for this device",
-  "type": "thing",
-  "description": "A WoT-connected Raspberry Pi",
-  "properties": {
-    "temperature": {
-      "type": "number",
-      "unit": "celsius",
-      "description": "An ambient temperature sensor",
-      "href": "/things/pi/properties/temperature"
-    },
-    "humidity": {
-      "type": "number",
-      "unit": "percent",
-      "href": "/things/pi/properties/humidity"
-    },
-    "led": {
-      "type": "boolean",
-      "description": "A red LED",
-      "href": "/things/pi/properties/led"
-    }
-  }
-}
-
-
-
 
 

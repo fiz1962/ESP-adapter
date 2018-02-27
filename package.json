@@ -1,6 +1,6 @@
 {
   "name": "ESP-adapter",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "ESP Mozillia-IOT adapter",
   "main": "index.js",
   "keywords": [
@@ -24,7 +24,9 @@
     "LICENSE",
     "SHA256SUMS",
     "esp-adapter.js",
-    "index.js"
+    "index.js",
+    "phpThing.tgz",
+    "espThing.ino"
   ],
   "moziot": {
     "api": {
@@ -34,8 +36,8 @@
     "plugin": true,
     "exec": "{nodeLoader} {path}",
     "config": {
-      "ipStart": "10.0.2.10",
-      "ipEnd": "10.0.2.20",
+      "ipStart": "192.168.1.100",
+      "ipEnd": "192.168.1.199",
       "thingUser": "myUser",
       "thingPwd": "myPwd"
     }

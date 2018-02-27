@@ -18,18 +18,25 @@ class ESPProperty extends Property {
     super(device, name, propertyDescription);
     this.unit = propertyDescription.unit;
     this.description = propertyDescription.description;
+    this.href = propertyDescription.href;
     this.device = device;
 
     this.setCachedValue(propertyDescription.value);
     this.device.notifyPropertyChanged(this);
-    let url = this.device.url;
-
-    url = this.device.url + this.href;
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.setRequestHeader("Content-type", "application/json");
-    xhr.send(data);
-
+    let url = this.device.url + this.href;
+    console.log('New ESPProperty, url='+url);
+    
+    fetch(url)
+    .then((resp) => resp.json())
+    .then((resp) => {
+        let keys = Object.keys(resp);
+        let values = Object.values(resp); 
+        for (var i=0; i<keys.length; i++) {
+          let obj = this.device.findProperty(keys[i]);
+          obj.setCachedValue(values[i]);
+          this.device.notifyPropertyChanged(obj);
+        }
+    });
   }
 
   /**
@@ -39,22 +46,27 @@ class ESPProperty extends Property {
    * @note it is possible that the updated value doesn't match
    * the value passed in.
    */
-
   setValue(value) {
-      
     return new Promise((resolve, reject) => {
-      let url=this.device.url;
-
       // set value but allow override in response.
       this.setCachedValue(value);
       resolve(value);
       this.device.notifyPropertyChanged(this);
 
-      url = this.device.url + this.href;
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", url, true);
-      xhr.setRequestHeader("Content-type", "application/json");
-      xhr.send(data);
+    let url = this.device.url + this.href+'?'+this.name+'='+value;
+    console.log('Getting '+url);
+    fetch(url)
+    .then((resp) => resp.json())
+    .then((resp) => {
+        let keys = Object.keys(resp);
+        let values = Object.values(resp); 
+        for (var i=0; i<keys.length; i++) {
+          let obj = this.device.findProperty(keys[i]);
+          obj.setCachedValue(values[i]);
+          this.device.notifyPropertyChanged(obj);
+        }
+    });
+
     });
   }
 }
@@ -71,8 +83,10 @@ class ESPDevice extends Device {
     console.log("Adding device at "+url);
     // properties are set by a json response from the actual device
     let keys = Object.keys(properties);
-    let values = Object.values(properties); 
+    let values = Object.values(properties);
+    console.log('keys length ' + keys.length); 
     for (var i=0; i<keys.length; i++) {
+      console.log('key:'+keys[i]+';value:'+values[i]);
       this.properties.set(keys[i], new ESPProperty(this, keys[i], values[i]));
     }
   }
@@ -94,11 +108,11 @@ class ESPAdapter extends Adapter {
       let thingResponse = await response.json();
       let name = thingResponse['name'];
       let id = this.name + "-" + i;
+      let description = "espThing";
       if( thingResponse['description'] )
-        let description = thingResponse['description'];
-      else
-        let description = '';
+        description = thingResponse['description'];
       let type = thingResponse['type'];
+
       this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, url, thingResponse['properties']));
     } catch(err) {
       //console.log('tryDevice err:+'+err);
