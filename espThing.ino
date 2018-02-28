@@ -30,53 +30,68 @@ void setup() {
   server.on("/things/esp", []() {
     if(!server.authenticate(thingUser, thingPwd))
       return server.requestAuthentication();
-      
+   Serial.println("Getting thing");   
     String configThing = "{\
    \"name\": \"ESP8266\",\
    \"type\": \"thing\",\
-   \"id\": \"ESP8266-01\",\
    \"description\": \"myESP8266\",\   
    \"properties\": {\
      \"clock\": {\
        \"type\":  \"number\",\
        \"unit\":  \"Ticks\",\
        \"description\":  \"The millisec clock count\",\
-       \"href\":\"/properties/clock\",\
+       \"href\":\"/properties/clock\"\
     },\
      \"led\": {\
        \"type\":  \"boolean\",\
        \"description\":  \"The onboard LED\",\
-       \"href\":\"/properties/led\",\
+       \"href\":\"/properties/led\"\
     }\
   }\
 }";
     server.send(200, "text/json", configThing);
   });
  
-  // respond to reading current led property
-  server.on("/things/esp/properties/led", HTTP_GET, []() {
+  // respond to led property
+  server.on("/things/esp/properties/led", []() {
     Serial.println("led thing property");
     if(!server.authenticate(thingUser, thingPwd))
       return server.requestAuthentication();
    
    char respondThing[1024];
-   sprintf(respondThing, "{\"led\":\"%s\"}", digitalRead(LED_BUILTIN));
+   int nIndex = -1;
+   
+   for (int i = 0; i < server.args(); i++)
+     if( server.argName(i) =="led" )
+       nIndex = i;
 
+    if( nIndex > -1 ) {
+      if( server.arg("led")=="true" )
+        digitalWrite(LED_BUILTIN, HIGH);
+      else
+        digitalWrite(LED_BUILTIN, LOW);
+    }
+
+    if( digitalRead(LED_BUILTIN)==HIGH )
+      sprintf(respondThing, "{\"led\":true}");
+    else
+      sprintf(respondThing, "{\"led\":false}");
+      
     server.send(200, "text/json", respondThing); 
   });
  
-  // respond to setting led property
-  server.on("/things/esp/properties/led", HTTP_PUT, []() {
+  // respond to clock property
+  server.on("/things/esp/properties/clock", []() {
     Serial.println("led thing property");
     if(!server.authenticate(thingUser, thingPwd))
       return server.requestAuthentication();
    
-    char* respondThing = "";
-
-      
+    char respondThing[1024];
+    // clock can only be read, not set       
+    sprintf(respondThing, "{\"clock\":\"%d\"}", millis());
     server.send(200, "text/json", respondThing); 
   });
-
+ 
   server.begin();                                       //Start the server
   Serial.println("Server listening");
  

@@ -61,6 +61,7 @@ class ESPProperty extends Property {
         let keys = Object.keys(resp);
         let values = Object.values(resp); 
         for (var i=0; i<keys.length; i++) {
+console.log('Setting value for '+keys[i]+' to '+values[i]);
           let obj = this.device.findProperty(keys[i]);
           obj.setCachedValue(values[i]);
           this.device.notifyPropertyChanged(obj);
@@ -84,9 +85,7 @@ class ESPDevice extends Device {
     // properties are set by a json response from the actual device
     let keys = Object.keys(properties);
     let values = Object.values(properties);
-    console.log('keys length ' + keys.length); 
     for (var i=0; i<keys.length; i++) {
-      console.log('key:'+keys[i]+';value:'+values[i]);
       this.properties.set(keys[i], new ESPProperty(this, keys[i], values[i]));
     }
   }
@@ -103,6 +102,7 @@ class ESPAdapter extends Adapter {
     console.log("Trying "+url);
     try {
       let response = await fetch(url);
+      console.log('Got thing at '+url);
       if (!response.ok) // or check for response.status
           throw new Error(response.statusText);
       let thingResponse = await response.json();
@@ -112,7 +112,6 @@ class ESPAdapter extends Adapter {
       if( thingResponse['description'] )
         description = thingResponse['description'];
       let type = thingResponse['type'];
-
       this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, url, thingResponse['properties']));
     } catch(err) {
       //console.log('tryDevice err:+'+err);
