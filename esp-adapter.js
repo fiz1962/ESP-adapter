@@ -107,13 +107,13 @@ class ESPAdapter extends Adapter {
      let thingResponse = await response.json();
      let keys = Object.keys(thingResponse);
      let values = Object.values(thingResponse); 
-console.log('things length '+keys.length);
+
      for( var n=0; n<keys.length; n++ ) {
         console.log('Adding thing->'+keys[n]);
         let thingObj = values[n];
         let name = thingObj['name'];
         let id = this.name + "-" + i + ':' + n;
-        let description = "espThing";
+        let description = '';
         if( thingObj['description'] )
           description = thingObj['description'];
         let type = thingObj['type'];
