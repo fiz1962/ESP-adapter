@@ -31,7 +31,8 @@ void setup() {
     if(!server.authenticate(thingUser, thingPwd))
       return server.requestAuthentication();
    Serial.println("Getting thing");   
-    String configThing = "{\
+    String configThing = "[\
+ {\
    \"name\": \"ESP8266\",\
    \"type\": \"thing\",\
    \"description\": \"myESP8266\",\   
@@ -48,7 +49,8 @@ void setup() {
        \"href\":\"/properties/led\"\
     }\
   }\
-}";
+ }\
+]";
     server.send(200, "text/json", configThing);
   });
  

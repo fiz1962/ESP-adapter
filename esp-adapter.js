@@ -102,17 +102,24 @@ class ESPAdapter extends Adapter {
     console.log("Trying "+url);
     try {
       let response = await fetch(url);
-      console.log('Got thing at '+url);
       if (!response.ok) // or check for response.status
           throw new Error(response.statusText);
-      let thingResponse = await response.json();
-      let name = thingResponse['name'];
-      let id = this.name + "-" + i;
-      let description = "espThing";
-      if( thingResponse['description'] )
-        description = thingResponse['description'];
-      let type = thingResponse['type'];
-      this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, url, thingResponse['properties']));
+     let thingResponse = await response.json();
+     let keys = Object.keys(thingResponse);
+     let values = Object.values(thingResponse); 
+console.log('things length '+keys.length);
+     for( var n=0; n<keys.length; n++ ) {
+        console.log('Adding thing->'+keys[n]);
+        let thingObj = values[n];
+        let name = thingObj['name'];
+        let id = this.name + "-" + i + ':' + n;
+        let description = "espThing";
+        if( thingObj['description'] )
+          description = thingObj['description'];
+        let type = thingObj['type'];
+  
+        this.handleDeviceAdded(new ESPDevice(this, id, name, type, description, url, thingObj['properties']));
+    }
     } catch(err) {
       //console.log('tryDevice err:+'+err);
     }
