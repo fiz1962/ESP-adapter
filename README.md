@@ -20,4 +20,3 @@ Return to the main page.
 Click the "+" in the bottom right of the web browser to start pairing.
 Save any devices.
 
-
