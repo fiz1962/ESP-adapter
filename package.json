@@ -25,7 +25,7 @@
     "SHA256SUMS",
     "esp-adapter.js",
     "index.js",
-    "phpThing.tgz",
+    "phpThings.tgz",
     "espThing.ino"
   ],
   "moziot": {

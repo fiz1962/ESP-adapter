@@ -33,14 +33,14 @@ void setup() {
    Serial.println("Getting thing");   
     String configThing = "[\
  {\
-   \"name\": \"ESP8266\",\
+   \"name\": \"ESP8266 Thing 1\",\
    \"type\": \"thing\",\
    \"description\": \"myESP8266\",\   
    \"properties\": {\
      \"clock\": {\
        \"type\":  \"number\",\
        \"unit\":  \"Ticks\",\
-       \"description\":  \"The millisec clock count\",\
+       \"description\":  \"The short millisec clock count\",\
        \"href\":\"/properties/clock\"\
     },\
      \"led\": {\
@@ -49,7 +49,20 @@ void setup() {
        \"href\":\"/properties/led\"\
     }\
   }\
+},\
+{\
+   \"name\": \"ESP8266 Thing 2\",\
+   \"type\": \"thing\",\
+   \"description\": \"myESP8266\",\   
+   \"properties\": {\
+     \"anotherclock\": {\
+       \"type\":  \"number\",\
+       \"unit\":  \"Ticks\",\
+       \"description\":  \"The long millisec clock count\",\
+       \"href\":\"/properties/anotherclock\"\
+    }\
  }\
+}\
 ]";
     server.send(200, "text/json", configThing);
   });
@@ -89,8 +102,21 @@ void setup() {
       return server.requestAuthentication();
    
     char respondThing[1024];
+    // clock can only be read, not set
+    // truncate to 8 bits as an example
+    sprintf(respondThing, "{\"clock\":\"%d\"}", millis()&0xff);
+    server.send(200, "text/json", respondThing); 
+  });
+ 
+  // respond to clock property
+  server.on("/things/esp/properties/anotherclock", []() {
+    Serial.println("led thing property");
+    if(!server.authenticate(thingUser, thingPwd))
+      return server.requestAuthentication();
+   
+    char respondThing[1024];
     // clock can only be read, not set       
-    sprintf(respondThing, "{\"clock\":\"%d\"}", millis());
+    sprintf(respondThing, "{\"anotherclock\":\"%d\"}", millis());
     server.send(200, "text/json", respondThing); 
   });
  
