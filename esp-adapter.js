@@ -8,10 +8,23 @@
 
 'use strict';
 
-const Adapter = require('../adapter');
-const Device = require('../device');
-const Property = require('../property');
 const fetch = require('node-fetch');
+
+let Adapter, Device, Property;
+try {
+  Adapter = require('../adapter');
+  Device = require('../device');
+  Property = require('../property');
+} catch (e) {
+  if (e.code !== 'MODULE_NOT_FOUND') {
+    throw e;
+  }
+
+  const gwa = require('gateway-addon');
+  Adapter = gwa.Adapter;
+  Device = gwa.Device;
+  Property = gwa.Property;
+}
 
 class ESPProperty extends Property {
   constructor(device, name, propertyDescription) {
