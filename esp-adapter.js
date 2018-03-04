@@ -138,7 +138,7 @@ class ESPAdapter extends Adapter {
     var thingPwd = this.manifest.moziot.config.thingPwd;
 
     console.log("Pairing "+ipStartSplit[3]+" to "+ipEndSplit[3]);
-    for(var i=ipStartSplit[3]; i<=ipEndSplit[3]; i++) {
+    for(var i=Number(ipStartSplit[3]); i<=Number(ipEndSplit[3]); i++) {
       if( thingUser ) {
         url = "http://"+thingUser+":"+thingPwd+"@"+ipStartSplit[0]+"."+ipStartSplit[1]+"."+ipStartSplit[2]+"."+i+"/things/esp";
       }
