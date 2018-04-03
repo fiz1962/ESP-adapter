@@ -24,9 +24,7 @@
     "LICENSE",
     "SHA256SUMS",
     "esp-adapter.js",
-    "index.js",
-    "phpThings.tgz",
-    "espThing.ino"
+    "index.js"
   ],
   "moziot": {
     "api": {
